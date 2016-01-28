@@ -1,4 +1,5 @@
 var Todo = require('./models/todo');
+var Card = require('./models/cards');
 
 function getTodos(res){
 	Todo.find(function(err, todos) {
@@ -19,6 +20,47 @@ module.exports = function(app) {
 
 		// use mongoose to get all todos in the database
 		getTodos(res);
+	});
+
+	// create todo and send back all todos after creation
+	app.post('/api/card', function(req, res) {
+
+		var card = req.body.card;
+		if (
+			card.name && 
+			card.colors && // check reference
+			card.colorIdentity && // check reference
+			card.multiverseid &&
+			card.artist && 
+			card.cmc &&
+			card.flavor && 
+			card.rarity && // check reference
+			card.power &&
+			card.toughness &&
+			card.type && // check reference
+			card.subtypes &&
+			card.types &&
+			card.text &&
+			card.manaCost
+			) {
+			Card.create(card, 
+				function(err, todo) {
+					if (err)
+						res.send(err, false);
+					else
+						res.send(null, true)
+					// get and return all the todos after you create another
+					getTodos(res);
+				});
+
+		}
+		else {
+			console.log(card);
+			res.send('Error with card.');
+		}
+
+		// create a todo, information comes from AJAX request from Angular
+	
 	});
 
 	// create todo and send back all todos after creation

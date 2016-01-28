@@ -1,22 +1,24 @@
 {
-  "name"         : "node-todo",
-  "version"      : "0.0.1",
-  "description"  : "Simple todo application.",
-  "main"         : "server.js",
-  "license"      : "MIT",
-  "author"       : "Boman",
-  "scripts"      : {
-    "start":    "nodemon server.js"
+  "name": "node-todo",
+  "version": "0.0.1",
+  "description": "Simple todo application.",
+  "main": "server.js",
+  "license": "MIT",
+  "author": "Boman",
+  "scripts": {
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/bisforboman/mtgcardsearch.git"
   },
-  "dependencies" : {
-    "express"         : "~4.6.1",
-    "mongoose"        : "~3.8.13",
-    "morgan"          : "~1.1.1",
-    "body-parser"     : "~1.4.3",
-    "method-override" : "~2.1.1"
+  "dependencies": {
+    "body-parser": "~1.4.3",
+    "express": "~4.6.1",
+    "gridfs-stream": "^1.1.1",
+    "method-override": "~2.1.1",
+    "mongodb": "^2.1.4",
+    "mongoose": "^3.8.39",
+    "morgan": "~1.1.1"
   }
 }

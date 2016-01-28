@@ -12,6 +12,7 @@ pids
 logs
 results
 .idea
+config
 
 npm-debug.log
 node_modules
