@@ -10,9 +10,8 @@ lib-cov
 data
 pids
 logs
-results
-.idea
 config
+.idea
 
 npm-debug.log
 node_modules
