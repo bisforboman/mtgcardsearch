@@ -1,12 +1,17 @@
 {
   "name"         : "node-todo",
-  "version"      : "0.0.0",
+  "version"      : "0.0.1",
   "description"  : "Simple todo application.",
   "main"         : "server.js",
-  "author"       : "Scotch",
+  "license"      : "MIT",
+  "author"       : "Boman",
   "scripts"      : {
     "start":    "nodemon server.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bisforboman/mtgcardsearch.git"
+  }
   "dependencies" : {
     "express"         : "~4.6.1",
     "mongoose"        : "~3.8.13",
