@@ -1,97 +1,83 @@
-var Todo = require('./models/todo');
 var Card = require('./models/cards');
+var HashMap = require('hashmap');
 
-function getTodos(res){
-	Todo.find(function(err, todos) {
+function getCard(cardId, res){
+	Card.findOne({multiverseid: cardId},function(err, card) {
+		if (err)
+			res.send(err)
+		res.send(card); // return all todos in JSON format
+	});
+};
 
-			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
-			if (err)
-				res.send(err)
+function findCards(searchStr, res) {
 
-			res.json(todos); // return all todos in JSON format
+	/* TODO:
+		create hashmap for different search options.
+		*/
+
+	// searches for any name containing the sequence "searchStr".
+	var query = new RegExp('^' +searchStr+ '$', "i");
+	var config_json = {
+		'name': { 
+			"$regex": searchStr, 
+			"$options": "i"
+		} 
+	};
+
+	Card.find(config_json, function(err, cards) {
+		if(err)
+			res.send(err);
+
+		var cardMap = new HashMap();
+
+		for(var cardsindex in cards) {
+			var c = cards[cardsindex]; 
+			if(cardMap.has(c.name)) {
+				var cardList = cardMap.get(c.name);
+				cardList.push(c);
+				cardMap.set(c.name,cardList);
+			}
+			else {
+				var cardList = [];
+				cardList.push(c);
+				cardMap.set(c.name,cardList);
+			}
+		}
+		console.log("Amount found: " + cardMap.count());
+		reCards = [];
+		var val=0,
+			k = 0;
+
+		cardMap.forEach(function(value,key) {
+			val=0, k=0;
+			for(var i=0; i<value.length; i++) {
+				if(value[i].multiverseid && value[i].multiverseid > val) {
+					val = value[i].multiverseid;
+					k = i;
+				}
+			}
+			reCards.push(value[k]);
 		});
+		res.send(reCards);
+	});
 };
 
 module.exports = function(app) {
 
 	// api ---------------------------------------------------------------------
 	// get all todos
-	app.get('/api/todos', function(req, res) {
-
-		// use mongoose to get all todos in the database
-		getTodos(res);
+	app.get('/api/card/:cardId', function(req, res) {
+		var cardId = req.params.cardId;
+		getCard(cardId,res);
 	});
 
-	// create todo and send back all todos after creation
-	app.post('/api/card', function(req, res) {
 
-		var card = req.body.card;
-		if (
-			card.name && 
-			card.colors && // check reference
-			card.colorIdentity && // check reference
-			card.multiverseid &&
-			card.artist && 
-			card.cmc &&
-			card.flavor && 
-			card.rarity && // check reference
-			card.power &&
-			card.toughness &&
-			card.type && // check reference
-			card.subtypes &&
-			card.types &&
-			card.text &&
-			card.manaCost
-			) {
-			Card.create(card, 
-				function(err, todo) {
-					if (err)
-						res.send(err, false);
-					else
-						res.send(null, true)
-					// get and return all the todos after you create another
-					getTodos(res);
-				});
+	app.get('/api/cards/:searchStr', function(req,res) {
+		var searchStr = req.params.searchStr;
+		findCards(searchStr, res);
+	});
 
-		}
-		else {
-			console.log(card);
-			res.send('Error with card.');
-		}
-
-		// create a todo, information comes from AJAX request from Angular
 	
-	});
-
-	// create todo and send back all todos after creation
-	app.post('/api/todos', function(req, res) {
-
-		// create a todo, information comes from AJAX request from Angular
-		Todo.create({
-			text : req.body.text,
-			done : false
-		}, function(err, todo) {
-			if (err)
-				res.send(err);
-
-			// get and return all the todos after you create another
-			getTodos(res);
-		});
-
-	});
-
-	// delete a todo
-	app.delete('/api/todos/:todo_id', function(req, res) {
-		Todo.remove({
-			_id : req.params.todo_id
-		}, function(err, todo) {
-			if (err)
-				res.send(err);
-
-			getTodos(res);
-		});
-	});
-
 	// application -------------------------------------------------------------
 	app.get('*', function(req, res) {
 		res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)

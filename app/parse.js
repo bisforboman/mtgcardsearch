@@ -2,80 +2,50 @@
  * Created by Boman on 2016-01-27.
  */
 
+var Card = require('./models/cards');
 
-/* stream to mongo syntax
-
-var request = require('request')
-var parser = require('JSONStream').parse('rows.*.doc')
-var options = { db: 'mongodb://localhost:27017/', collection: 'cards' }
-var streamToMongo = require('stream-to-mongo')(options);
-
-request(allsets)
-    .pipe(parser)
-    .pipe(streamToMongo); */
-/*
-var Q 			= require('q'),
-	database 	= require('./config/database'),
-	FILENAME	= "AllSets.json";
-
-module.exports = {
-    getStatistics: function () {
-        var deferred = Q.defer();
-
-        var file = fs.createReadStream(__dirname + '/' + FILENAME);
-
-        var req = http.request(database.url, function(res) {
-          res.on('data', function(chunk) {
-              file.write(chunk);
-          });
-
-          res.on('end', function () {
-                deferred.resolve(FILENAME);
-          })
-        });
-
-        req.on('error', function(err) {
-            //if an error occurs reject the deferred
-            console.log(err);
-            deferred.reject(err);
-        });
-
-        req.end();
-
-        return deferred.promise;
-    }
-
-}
-*/
-
-var mongo 		= require('mongodb'),
-	database 	= require('../config/database'),
- 	Grid 		= require('gridfs-stream'),
+var	database 	= require('../config/database'),
+	fs 			= require('fs'),
  	mongoose	= require('mongoose');
 
+var options = {
+  	user: 'dbuser',
+  	pass: 'lightning'
+};
+
 /* Ensure it's connected to mongodb. */
-var conn = mongoose.createConnection(database.url);
+var conn = mongoose.createConnection(database.url, options);
+
+var FILENAME = 'AllSets.json';
+var allCards = [];
+
+conn.on('error', function(err) {
+	throw err;
+});
 
 conn.once('open', function() {
-	var gfs = Grid(conn.db);
-	// streaming from gridfs
-	var readstream = gfs.createReadStream({
-	  filename: 'AllSets.json'
+	fs.readFile(__dirname + '/' + FILENAME, function(err,data) {
+		if(err) throw err;
+		else {
+			var allsets = JSON.parse(data);
+	//		var ogw = json.OGW.cards;
+			for(var setindex in allsets) {
+				for(var cardindex in allsets[setindex].cards) {
+					allCards.push(allsets[setindex].cards[cardindex]);
+				}
+			}
+			console.log("Now parsed all cards.");
+			console.log("allCards.length: "+ allCards.length);
+			/* All cards now inserted to allCards */
+			for(var cardindex in allCards) {
+				var card = new Card(allCards[cardindex]);
+				Card.create(card, function(err, reCard) {
+					if(err) throw err;
+					else console.log(reCard.name + " was added.");
+				});
+			}
+		}
 	});
-
-	readStream.on('data', function(data) {
-		var json_obj = JSON.parse(data);
-		console.log(json_obj);
-	});
-
-	//error handling, e.g. file does not exist
-	readstream.on('error', function (err) {
-	  console.log('An error occurred!', err);
-	  throw err;
-	});
-
-	// ???? tydligen gott.
-	readstream.pipe(response);
 });
 
 

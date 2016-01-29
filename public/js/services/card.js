@@ -2,13 +2,13 @@ angular.module('cardService', [])
 
 	// super simple service
 	// each function returns a promise object 
-	.factory('Card', ['$http',function($http) {
+	.factory('Cards', ['$http',function($http) {
 		return {
-			get : function() {
-				return $http.get('/api/card');
+			get : function(cardId) {
+				return $http.get('/api/card/:cardId');
 			},
-			create : function(cardData) {
-				return $http.post('/api/card', cardData);
+			searchForCard : function(searchStr) {
+				return $http.get('/api/cards/' + searchStr);
 			}
 		}
 	}]);
