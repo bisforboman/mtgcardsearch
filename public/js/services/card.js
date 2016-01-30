@@ -9,6 +9,9 @@ angular.module('cardService', [])
 			},
 			searchForCard : function(searchStr) {
 				return $http.get('/api/cards/' + searchStr);
+			},
+			searchForCards : function(searchStr, options) {
+				return $http.post('/api/cards/', {searchStr: searchStr, options: options});
 			}
 		}
 	}]);

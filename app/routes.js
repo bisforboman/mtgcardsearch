@@ -9,7 +9,7 @@ function getCard(cardId, res){
 	});
 };
 
-function findCards(searchStr, res) {
+function findCards(searchStr, options, res) {
 
 	/* TODO:
 		create hashmap for different search options.
@@ -17,11 +17,51 @@ function findCards(searchStr, res) {
 
 	// searches for any name containing the sequence "searchStr".
 	var query = new RegExp('^' +searchStr+ '$', "i");
-	var config_json = {
-		'name': { 
-			"$regex": searchStr, 
-			"$options": "i"
-		} 
+	var contains = { 
+		"$regex": searchStr, 
+		"$options": "i"
+	};
+
+	var config_json = {};
+	
+	/* COLOR CONFIGURATION ---- */
+
+	console.log("Current configuration:");
+	console.log(options);
+
+	// shall we exclude the other colors?
+	if(options.colorsForce === 'true') {
+		console.log('Now searching for the following colors: ' + options.colors.toString());
+		console.log('And not allowing: ' + options.noColors.toString());
+		config_json.colors = {
+			'$in': options.colors,
+			'$not': {
+				'$in': options.noColors
+			}
+		};
+	}
+	else {
+	// any combinations with the chosen will do
+		console.log('Now searching for the following colors: ' + options.colors.toString());
+		config_json.colors = {
+			"$in": options.colors
+		};
+	}
+
+	// json passed to the DB.
+
+	switch(options.target) {
+		case 'name':
+			config_json.name = contains;
+			break;
+		case 'type':
+			config_json.type = contains;
+			break;
+		case 'text':
+			config_json.text = contains
+			break;
+		default: 
+			config_json.name = contains
 	};
 
 	Card.find(config_json, function(err, cards) {
@@ -57,6 +97,8 @@ function findCards(searchStr, res) {
 				}
 			}
 			reCards.push(value[k]);
+			// show found card in console for testing
+			//console.log(value[k]); 
 		});
 		res.send(reCards);
 	});
@@ -71,10 +113,16 @@ module.exports = function(app) {
 		getCard(cardId,res);
 	});
 
-
+	/* currently not working */
 	app.get('/api/cards/:searchStr', function(req,res) {
 		var searchStr = req.params.searchStr;
-		findCards(searchStr, res);
+		findCards(searchStr, {target: 'name', colors: ['Blue'], noColors:['Red','White'], colorsForce: false},res);
+	});
+
+	app.post('/api/cards/', function(req,res) {
+		var options = req.body.options;
+		var searchStr = req.body.searchStr;
+		findCards(searchStr,options,res);
 	});
 
 	

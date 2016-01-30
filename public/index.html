@@ -42,9 +42,39 @@
 			<div class="col-sm-8 col-sm-offset-2 text-center">
 				<form>
 					<div class="form-group">
-
 						<!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
 						<input type="text" class="form-control input-lg text-center" placeholder="Search for a magic card..." ng-model="formData.text">
+					</div>
+					<div class="form-group"> 
+						<label 
+							class="checkbox-inline" 
+							ng-repeat="color in cardOptions.colors">
+							<input 
+								type="checkbox"
+								value="{{color.name}}"
+								ng-model="color.selected"
+								name="selectedColors[]"> {{color.name}}
+						</label>
+					</div>
+
+					<div class="form-group"> 
+						Only find cards of the chosen colors?
+						<label 
+							class="checkbox-inline">
+							<input 
+								type="radio"
+								ng-model="cardOptions.colorsForce"
+								value='true'
+								> Yes
+						</label>
+						<label 
+							class="checkbox-inline">
+							<input 
+								type="radio"
+								ng-model="cardOptions.colorsForce"
+								value='false'
+								> No
+						</label>
 					</div>
 
 					<!-- createToDo() WILL CREATE NEW TODOS -->
