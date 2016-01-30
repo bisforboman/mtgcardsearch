@@ -7,8 +7,8 @@ angular.module('cardService', [])
 			get : function(cardId) {
 				return $http.get('/api/card/:cardId');
 			},
-			searchForCard : function(searchStr) {
-				return $http.get('/api/cards/' + searchStr);
+			searchCard : function(multiverseid) {
+				return $http.get('/api/cards/' + multiverseid);
 			},
 			searchForCards : function(searchStr, options) {
 				return $http.post('/api/cards/', {searchStr: searchStr, options: options});

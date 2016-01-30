@@ -37,10 +37,8 @@ function findCards(searchStr, options, res) {
 	}
 	else {
 	// any combinations with the chosen will do
-		config_json.colors = {
-			"$in": options.colors,
-		};
-	}
+		config_json.colors = {"$in": options.colors};
+	};
 
 	// json passed to the DB.
 
@@ -52,10 +50,37 @@ function findCards(searchStr, options, res) {
 			config_json.type = contains;
 			break;
 		case 'text':
-			config_json.text = contains
+			config_json.text = contains;
 			break;
 		default: 
 			config_json.name = contains
+	};
+
+	/* UGLY FIX TO ALLOW COLORLESS CARDS. */
+	if(config_json.colors.$in.indexOf('Colorless') > 0) {
+
+		// remove colorless from the array 'colors'.
+		config_json.colors.$in.splice(config_json.colors.$in.indexOf('Colorless'),1);
+		
+		// how to find colorless cards in mongoDB.
+		var colorless = { "$size": 0 };
+
+		// copy the query. this is an ugly copy aswell.
+		var art_config_json = JSON.parse(JSON.stringify(config_json));
+		
+		// change the colors to search for colorless cards.
+		art_config_json.colors = colorless;
+
+		// combined them to a new $or-query.
+		var combined = { 
+			"$or": [
+				art_config_json,
+				config_json
+				]
+		};
+
+		// now overwrite the old query.
+		config_json = combined;
 	};
 
 	Card.find(config_json, function(err, cards) {
@@ -108,9 +133,9 @@ module.exports = function(app) {
 	});
 
 	/* currently not working */
-	app.get('/api/cards/:searchStr', function(req,res) {
-		var searchStr = req.params.searchStr;
-		findCards(searchStr, {target: 'name', colors: ['Blue'], noColors:['Red','White'], colorsForce: false},res);
+	app.get('/api/cards/:multiverseid', function(req,res) {
+		var multiverseid = req.params.multiverseid;
+		getCard(multiverseid,res);
 	});
 
 	app.post('/api/cards/', function(req,res) {
