@@ -9,16 +9,23 @@ function getCard(cardId, res){
 	});
 };
 
-function findCards(searchStr, options, res) {
+function findCards(options, res) {
 
 	/* TODO:
 		create hashmap for different search options.
 		*/
 
-	// searches for any name containing the sequence "searchStr".
-	var query = new RegExp('^' +searchStr+ '$', "i");
-	var contains = { 
-		"$regex": searchStr, 
+	var cardNameContains = { 
+		"$regex": options.cardName, 
+		"$options": "i"
+	};
+
+	var cardTypeContains = { 
+		"$regex": options.cardType, 
+		"$options": "i"
+	};
+	var cardTextContains = { 
+		"$regex": options.cardText, 
 		"$options": "i"
 	};
 
@@ -37,23 +44,9 @@ function findCards(searchStr, options, res) {
 	}
 	else {
 	// any combinations with the chosen will do
-		config_json.colors = {"$in": options.colors};
-	};
-
-	// json passed to the DB.
-
-	switch(options.target) {
-		case 'name':
-			config_json.name = contains;
-			break;
-		case 'type':
-			config_json.type = contains;
-			break;
-		case 'text':
-			config_json.text = contains;
-			break;
-		default: 
-			config_json.name = contains
+		config_json.colors = {
+			"$in": options.colors
+		};
 	};
 
 	/* UGLY FIX TO ALLOW COLORLESS CARDS. */
@@ -82,6 +75,18 @@ function findCards(searchStr, options, res) {
 		// now overwrite the old query.
 		config_json = combined;
 	};
+
+	// combine the fields.
+	var fieldJson = {
+		"$and": [
+			cardNameContains,
+			cardTypeContains,
+			cardTextContains,
+			config_json.colors
+			]
+	};
+
+	config_json = fieldJson;
 
 	Card.find(config_json, function(err, cards) {
 		if(err)
@@ -140,8 +145,7 @@ module.exports = function(app) {
 
 	app.post('/api/cards/', function(req,res) {
 		var options = req.body.options;
-		var searchStr = req.body.searchStr;
-		findCards(searchStr,options,res);
+		findCards(options,res);
 	});
 
 	

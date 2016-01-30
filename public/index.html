@@ -44,36 +44,8 @@
 			</div>
 
 		<form>
-			<div class="col-sm-10 col-sm-offset-1 text-center">
-				<div class="form-group"> 
-					<label>
-					What do you want to search for?
-					<label>	
-					<label 
-						class="checkbox-inline">
-						<input 
-							type="radio"
-							ng-model="cardOptions.target"
-							value='name'
-							> Card name
-					</label>
-					<label 
-						class="checkbox-inline">
-						<input 
-							type="radio"
-							ng-model="cardOptions.target"
-							value='type'
-							> Card type
-					</label>
-					<label 
-						class="checkbox-inline">
-						<input 
-							type="radio"
-							ng-model="cardOptions.target"
-							value='text'
-							> Card text
-					</label>
-				</div>
+			<div class="col-sm-10 col-sm-offset-1">
+				<div class="col-sm-6">
 					<!-- Text insertion -->
 					<div class="form-group input-group">
 						<span class="input-group-addon"><strong>Card name:</strong></span>
@@ -87,7 +59,8 @@
 						<span class="input-group-addon"><strong>Card text:</strong></span>
 						<input type="text" class="form-control" placeholder="..." ng-model="formData.cText">
 					</div>
-
+				</div>
+				<div class="col-sm-6">
 					<!-- Chosing colors -->
 					<div class="form-group"> 
 						<label 
@@ -100,7 +73,6 @@
 								name="selectedColors[]"> {{color.name}}
 						</label>
 					</div>
-
 					<!-- Chosing to force colors or not  -->
 					<div class="form-group"> 
 						<label>
@@ -123,8 +95,10 @@
 								> No
 						</label>
 					</div>			
-
+				</div>
+				<div class="row">
 					<button type="submit" class="btn btn-primary btn-lg" ng-click="findCards()">Search</button>
+				</div>
 				</form>
 			<p class="text-center" ng-show="loading">
 				<span class="fa fa-spinner fa-spin fa-3x"></span>

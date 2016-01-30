@@ -16,8 +16,7 @@ angular.module('cardController', [])
 				{ name: 'Black',		selected: true	},
 				{ name: 'Colorless',	selected: true	}
 			],
-			colorsForce: 'false',
-			target: 'name'
+			colorsForce: 'false'
 		};
 
 		/* -------- COLOR CHOICES ------------------ */
@@ -52,29 +51,34 @@ angular.module('cardController', [])
 
 		/* Call this function to search for cards matching the parameters. */
 		$scope.findCards = function() {
-			if ($scope.formData.text != undefined) {
-				$scope.showMultipleCards = true;
-				$scope.loading = true;
-				var config_json = {
-					colors: $scope.selection,
-					noColors: $scope.unSelection,
-					colorsForce: $scope.cardOptions.colorsForce,
-					target: $scope.cardOptions.target
-				};
+			if ($scope.formData.cText || 
+				$scope.formData.cType ||
+				$scope.formData.cName) {
+					$scope.showMultipleCards = true;
+					$scope.loading = true;
 
-				Cards.searchForCards($scope.formData.text, config_json)
-					.success(function(data) {
-						$scope.loading = false;
-						//$scope.formData = {}
-						$scope.cards = [];
-						for(var key in data) {
-							$scope.cards.push(data[key]);
-						};
-					})
-					.error(function(err) {
-						console.log("Error occured.");
-						console.error(err);
-					});
+					var config_json = {
+						cardText: $scope.formData.cText,
+						cardType: $scope.formData.cType,
+						cardName: $scope.formData.cName,
+						colors: $scope.selection,
+						noColors: $scope.unSelection,
+						colorsForce: $scope.cardOptions.colorsForce
+					};
+
+					Cards.searchForCards(config_json)
+						.success(function(data) {
+							$scope.loading = false;
+							//$scope.formData = {}
+							$scope.cards = [];
+							for(var key in data) {
+								$scope.cards.push(data[key]);
+							};
+						})
+						.error(function(err) {
+							console.log("Error occured.");
+							console.error(err);
+						});
 			}
 		};
 

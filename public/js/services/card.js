@@ -10,8 +10,8 @@ angular.module('cardService', [])
 			searchCard : function(multiverseid) {
 				return $http.get('/api/cards/' + multiverseid);
 			},
-			searchForCards : function(searchStr, options) {
-				return $http.post('/api/cards/', {searchStr: searchStr, options: options});
+			searchForCards : function(options) {
+				return $http.post('/api/cards/', {options: options});
 			}
 		}
 	}]);
