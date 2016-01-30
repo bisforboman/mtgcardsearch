@@ -26,13 +26,8 @@ function findCards(searchStr, options, res) {
 	
 	/* COLOR CONFIGURATION ---- */
 
-	console.log("Current configuration:");
-	console.log(options);
-
 	// shall we exclude the other colors?
 	if(options.colorsForce === 'true') {
-		console.log('Now searching for the following colors: ' + options.colors.toString());
-		console.log('And not allowing: ' + options.noColors.toString());
 		config_json.colors = {
 			'$in': options.colors,
 			'$not': {
@@ -42,9 +37,8 @@ function findCards(searchStr, options, res) {
 	}
 	else {
 	// any combinations with the chosen will do
-		console.log('Now searching for the following colors: ' + options.colors.toString());
 		config_json.colors = {
-			"$in": options.colors
+			"$in": options.colors,
 		};
 	}
 

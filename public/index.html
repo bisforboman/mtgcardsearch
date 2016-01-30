@@ -42,9 +42,11 @@
 			<div class="col-sm-8 col-sm-offset-2 text-center">
 				<form>
 					<div class="form-group">
-						<!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
+						<!-- Text insertion -->
 						<input type="text" class="form-control input-lg text-center" placeholder="Search for a magic card..." ng-model="formData.text">
 					</div>
+
+					<!-- Chosing colors -->
 					<div class="form-group"> 
 						<label 
 							class="checkbox-inline" 
@@ -57,8 +59,9 @@
 						</label>
 					</div>
 
+					<!-- Chosing to force colors or not  -->
 					<div class="form-group"> 
-						Only find cards of the chosen colors?
+						Exclude other colors?
 						<label 
 							class="checkbox-inline">
 							<input 
@@ -77,7 +80,34 @@
 						</label>
 					</div>
 
-					<!-- createToDo() WILL CREATE NEW TODOS -->
+					<div class="form-group"> 
+						What do you want to search for?
+						<label 
+							class="checkbox-inline">
+							<input 
+								type="radio"
+								ng-model="cardOptions.target"
+								value='name'
+								> Name
+						</label>
+						<label 
+							class="checkbox-inline">
+							<input 
+								type="radio"
+								ng-model="cardOptions.target"
+								value='type'
+								> Card type
+						</label>
+						<label 
+							class="checkbox-inline">
+							<input 
+								type="radio"
+								ng-model="cardOptions.target"
+								value='text'
+								> Card text
+						</label>
+					</div>					
+
 					<button type="submit" class="btn btn-primary btn-lg" ng-click="findCards()">Search</button>
 				</form>
 			
@@ -86,7 +116,7 @@
 
 
 		<div class="container">
-			<div>
+			<div class="text-center">
 				<div 
 					class="cardDiv"
 					ng-repeat="c in cards" 

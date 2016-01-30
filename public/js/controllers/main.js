@@ -7,13 +7,14 @@ angular.module('cardController', [])
 		$scope.cards = [];
 		$scope.cardOptions = {
 			colors: [
-				{ name: 'Red',    	selected: true 	},
-				{ name: 'Green',   	selected: false },
-				{ name: 'Blue',		selected: true 	},
-				{ name: 'White', 	selected: false },
+				{ name: 'Red',    	selected: true	},
+				{ name: 'Green',   	selected: true	},
+				{ name: 'Blue',		selected: true	},
+				{ name: 'White', 	selected: true	},
 				{ name: 'Black',	selected: true	}
 			],
-			colorsForce: 'false'
+			colorsForce: 'false',
+			target: 'name'
 		};
 
 		/* -------- COLOR CHOICES ------------------ */
@@ -55,10 +56,8 @@ angular.module('cardController', [])
 					colors: $scope.selection,
 					noColors: $scope.unSelection,
 					colorsForce: $scope.cardOptions.colorsForce,
-					target: 'name'
+					target: $scope.cardOptions.target
 				};
-
-				console.log(config_json);
 
 				Cards.searchForCards($scope.formData.text, config_json)
 					.success(function(data) {
