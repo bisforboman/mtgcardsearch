@@ -11,25 +11,37 @@ function getCard(cardId, res){
 
 function findCards(options, res) {
 
-	/* TODO:
-		create hashmap for different search options.
-		*/
-
-	var cardNameContains = { 
-		"$regex": options.cardName, 
-		"$options": "i"
+	/* previous query 
+	"$and": 
+		[{'name': cardNameContains},
+		{'type': cardTypeContains},
+		{'text': cardTextContains},
+		{'colors': config_json.colors}]
 	};
-
-	var cardTypeContains = { 
-		"$regex": options.cardType, 
-		"$options": "i"
-	};
-	var cardTextContains = { 
-		"$regex": options.cardText, 
-		"$options": "i"
-	};
+	*/
 
 	var config_json = {};
+
+	if(options.cardName && options.cardName.length > 0) {
+		config_json.name = { 
+			"$regex": options.cardName, 
+			"$options": "i"
+		};
+	};
+
+	if(options.cardType && options.cardType.length > 0) {
+		config_json.type = { 
+			"$regex": options.cardType, 
+			"$options": "i"
+		};
+	};
+
+	if(options.cardText && options.cardText.length > 0) {
+		config_json.text = { 
+			"$regex": options.cardText, 
+			"$options": "i"
+		};
+	};
 	
 	/* COLOR CONFIGURATION ---- */
 
@@ -48,6 +60,8 @@ function findCards(options, res) {
 			"$in": options.colors
 		};
 	};
+
+
 
 	/* UGLY FIX TO ALLOW COLORLESS CARDS. */
 	if(config_json.colors.$in.indexOf('Colorless') > 0) {
@@ -76,18 +90,6 @@ function findCards(options, res) {
 		config_json = combined;
 	};
 
-	// combine the fields.
-	var fieldJson = {
-		"$and": [
-			cardNameContains,
-			cardTypeContains,
-			cardTextContains,
-			config_json.colors
-			]
-	};
-
-	config_json = fieldJson;
-
 	Card.find(config_json, function(err, cards) {
 		if(err)
 			res.send(err);
@@ -107,7 +109,7 @@ function findCards(options, res) {
 				cardMap.set(c.name,cardList);
 			}
 		}
-		console.log("Amount found: " + cardMap.count());
+		//console.log("Amount found: " + cardMap.count());
 		reCards = [];
 		var val=0,
 			k = 0;
