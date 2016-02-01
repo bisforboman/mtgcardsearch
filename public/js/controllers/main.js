@@ -4,6 +4,8 @@ angular.module('cardController', [])
 	.controller('mainController', ['$scope','$http','Cards',function($scope, $http, Cards, colorFilter) {
 		$scope.formData = {};
 		$scope.loading = false;
+		$scope.showCardFoundText = false;
+		$scope.hideSearchOptions = false;
 		$scope.showMultipleCards = true;
 		$scope.cards = [];
 		$scope.singleCard = {};
@@ -49,6 +51,17 @@ angular.module('cardController', [])
 			});
 		}, true);
 
+		/* Options for showing and hiding search options. */
+
+		$scope.toggleSearchOptions = function() {
+			$scope.hideSearchOptions = !$scope.hideSearchOptions;
+		};
+
+		// misguiding name, not toggling.
+		$scope.toggleShowMultipleCards = function() {
+			$scope.showMultipleCards = true;
+		};
+
 		/* Call this function to search for cards matching the parameters. */
 		$scope.findCards = function() {
 			if ($scope.formData.cText || 
@@ -56,6 +69,7 @@ angular.module('cardController', [])
 				$scope.formData.cName) {
 					$scope.showMultipleCards = true;
 					$scope.loading = true;
+					$scope.showCardFoundText = false;
 
 					var config_json = {
 						cardText: $scope.formData.cText,
@@ -69,6 +83,7 @@ angular.module('cardController', [])
 					Cards.searchForCards(config_json)
 						.success(function(data) {
 							$scope.loading = false;
+							$scope.showCardFoundText = true;
 							//$scope.formData = {}
 							$scope.cards = [];
 							for(var key in data) {
